@@ -1,4 +1,4 @@
-package com.enoca.enoca.service.ProductHelperMethods;
+package com.enoca.enoca.service.HelperMethods.ProductHelper;
 
 import com.enoca.enoca.model.Product;
 import com.enoca.enoca.service.DTO.Product.GetAllProductResponse;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 @Service
-public class ProductHelperMethods {
+public class ProductMappingHelperMethods {
     public List<GetAllProductResponse> mapToDtoList(List<Product> products) {
         return products.stream().map(
                 product -> GetAllProductResponse.builder()
@@ -18,7 +18,6 @@ public class ProductHelperMethods {
                         .description(product.getDescription())
                         .unitInStock(product.getUnitInStock())
                         .sku(product.getSku())
-                        .cartItems(product.getCartItems())
                         .build()).collect(Collectors.toList());
     }
 
@@ -30,7 +29,6 @@ public class ProductHelperMethods {
                 .description(product.getDescription())
                 .unitInStock(product.getUnitInStock())
                 .sku(product.getSku())
-                .cartItems(product.getCartItems())
                 .build();
     }
 
