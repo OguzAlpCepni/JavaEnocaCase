@@ -49,8 +49,8 @@ public class CardManager implements CardService {
     public void emptyCart(String customerId) {
         Card card = getCart(customerId);
 
-        card.getCartItems().clear();      // Sepetteki tüm öğeleri temizle
-        card.setTotalPrice(BigDecimal.ZERO); // Toplam fiyatı sıfırla
+        card.getCartItems().clear();
+        card.setTotalPrice(BigDecimal.ZERO);
 
         cardRepository.save(card);
     }
@@ -63,7 +63,7 @@ public class CardManager implements CardService {
 
         Card card = getCart(customerId);
 
-        // Ürün sepette varsa
+
         Optional<CardItem> existingItem = card.getCartItems().stream()
                 .filter(item -> item.getProduct().getId().equals(product.getId()))
                 .findFirst();
@@ -72,15 +72,15 @@ public class CardManager implements CardService {
             CardItem item = existingItem.get();
 
             if (quantity == 0) {
-                // Miktar 0 ise ürünü sepetten çıkar
+
                 card.getCartItems().remove(item);
             } else {
-                // Ürünün miktarını güncelle
+
                 item.setQuantity(quantity);
                 item.setTotalPrice(product.getPrice().multiply(BigDecimal.valueOf(quantity)));
             }
         } else if (quantity > 0) {
-            // Ürün sepette yoksa ve miktar 0'dan büyükse, yeni bir CardItem olarak ekle
+
             CardItem newItem = new CardItem();
             newItem.setCard(card);
             newItem.setProduct(product);
@@ -89,7 +89,7 @@ public class CardManager implements CardService {
             card.getCartItems().add(newItem);
         }
 
-        // Toplam fiyatı güncelle
+
         updateTotalPrice(card);
         cardRepository.save(card);
     }
@@ -98,24 +98,24 @@ public class CardManager implements CardService {
         if (quantity <= 0) {
             throw new IllegalArgumentException("Quantity must be greater than zero to add a product.");
         }
-        // Ürün ID ile ürünü veritabanından getir, yoksa hata fırlat
+
         Product product = productRepository.findById(productDto.getId())
                 .orElseThrow(() -> new ProductNotFoundException("Product not found with ID: " + productDto.getId()));
-        // Müşteriye ait sepeti al
+
         Card card = getCart(customerId);
 
-        // Sepette ilgili ürün var mı kontrol et
+
         Optional<CardItem> existingItem = card.getCartItems().stream()
                 .filter(item -> item.getProduct().getId().equals(product.getId()))
                 .findFirst();
 
         if (existingItem.isPresent()) {
-            // Ürün sepette varsa mevcut miktarı artır ve toplam fiyatı güncelle
+
             CardItem item = existingItem.get();
             item.setQuantity(item.getQuantity() + quantity);
             item.setTotalPrice(product.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
         } else {
-            // Ürün sepette yoksa yeni bir CardItem oluştur ve sepete ekle
+
             CardItem newItem = new CardItem();
             newItem.setCard(card);
             newItem.setProduct(product);
@@ -124,24 +124,24 @@ public class CardManager implements CardService {
             card.getCartItems().add(newItem);
         }
 
-        // Sepetin toplam fiyatını güncelle ve sepeti kaydet
+
         updateTotalPrice(card);
         cardRepository.save(card);
     }
     public void removeProductFromCart(String customerId, ProductDto productDto) {
-        // Müşteriye ait sepeti al
+
         Card card = getCart(customerId);
 
-        // Ürün ID ile sepetteki ürünü bul
+
         Optional<CardItem> itemToRemove = card.getCartItems().stream()
                 .filter(item -> item.getProduct().getId().equals(productDto.getId()))
                 .findFirst();
 
         if (itemToRemove.isPresent()) {
-            // Ürünü sepetten kaldır
+
             card.getCartItems().remove(itemToRemove.get());
 
-            // Toplam fiyatı güncelle ve sepeti kaydet
+
             updateTotalPrice(card);
             cardRepository.save(card);
         } else {

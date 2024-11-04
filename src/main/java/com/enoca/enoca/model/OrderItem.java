@@ -20,14 +20,14 @@ public class OrderItem extends BaseEntity {
     @ManyToOne(fetch= FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
     @JsonIgnore
-    private Order order; // Sipariş ile ilişkilendirme
+    private Order order;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "product_id", nullable = false)
-    private Product product; // Ürün ile ilişkilendirme
+    private Product product;
 
-    private BigDecimal priceAtOrderTime; // Ürün fiyatı (sipariş verildiği anki fiyat)
+    private BigDecimal priceAtOrderTime;
     private BigDecimal totalPrice;
 
-    private int quantity; // Miktar
+    private int quantity;
 }

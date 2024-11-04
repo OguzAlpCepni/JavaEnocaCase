@@ -44,26 +44,25 @@ public class OrderManager implements OrderService {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new NoSuchElementException("Customer not found"));
         Card card = customer.getCard();
-        // Yeni bir sipariş oluşturun
+
         Order order = new Order();
         order.setCustomer(customer);
         order.setTotalAmount(card.getTotalPrice());
         order.setOrderItems(new ArrayList<>());
 
-        // Sepetteki her ürünü siparişe ekleyin
+
         for (CardItem cardItem : card.getCartItems()) {
             OrderItem orderItem = new OrderItem();
-            orderItem.setProduct(cardItem.getProduct()); // Ürün nesnesini ayarlayın
+            orderItem.setProduct(cardItem.getProduct());
             orderItem.setQuantity(cardItem.getQuantity());
-            orderItem.setPriceAtOrderTime(cardItem.getProduct().getPrice()); // Mevcut fiyat kaydediliyor
+            orderItem.setPriceAtOrderTime(cardItem.getProduct().getPrice());
             orderItem.setTotalPrice(cardItem.getProduct().getPrice().multiply(BigDecimal.valueOf(cardItem.getQuantity())));
             orderItem.setOrder(order);
             order.getOrderItems().add(orderItem);
-            // Ürünün stokunu güncelle
+
             Product product = cardItem.getProduct();
             int newStock = product.getUnitInStock() - cardItem.getQuantity();
-            // HistoricalPrice kaydı ekleme işlemi
-            // Stok miktarı negatif olmamalı
+
 
             if (newStock < 0) {
                 throw new IllegalArgumentException("Yetersiz stok: " + product.getProductName());
@@ -75,22 +74,22 @@ public class OrderManager implements OrderService {
             HistoricalProductPrices historicalPrice = new HistoricalProductPrices();
             historicalPrice.setPrice(cardItem.getProduct().getPrice());
             historicalPrice.setQuantity(cardItem.getQuantity());
-            historicalPrice.setEffectiveDate(LocalDateTime.now()); // Geçerli tarih
+            historicalPrice.setEffectiveDate(LocalDateTime.now());
             historicalProductPriceRepository.save(historicalPrice);
             historicalProductPriceRepository.save(historicalPrice);
         }
 
-        // Siparişi kaydedin
+
         orderRepository.save(order);
 
-        // Sepeti boşaltın
+
         cardService.emptyCart(customerId);
 
         return order;
     }
     public Order getOrderForCode(String orderId) {
         return orderRepository.findById(orderId)
-                .orElseThrow(() -> new NoSuchElementException("don't foundy any order"));
+                .orElseThrow(() -> new NoSuchElementException("don't found any order"));
     }
 
     public List<Order> getAllOrdersForCustomer(String customerId) {

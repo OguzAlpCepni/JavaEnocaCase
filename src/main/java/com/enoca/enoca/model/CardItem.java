@@ -24,13 +24,13 @@ public class CardItem extends BaseEntity{
     // Relation with product
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "product_id")
-    private Product product; // Hangi ürün olduğunu gösterir
+    private Product product;
 
     @Column(name ="quantity")
     private int quantity;
 
 
     @Column(name = "total_price")
-    private BigDecimal totalPrice; // Ürün fiyatı
+    private BigDecimal totalPrice;
 
 }
